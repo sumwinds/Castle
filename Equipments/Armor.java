@@ -3,9 +3,8 @@ package Equipments;
 public class Armor implements Equipment {
 
 	@Override
-	public void setsetInformation(int AKT, String description, int AC) {
-		// TODO Auto-generated method stub
-
+	public void setsetInformation(int ATK, String description, int AC) {
+		
 	}
 
 	@Override
