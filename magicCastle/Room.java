@@ -1,4 +1,4 @@
-package magicCastle;
+package castle;
 
 import java.util.HashMap;
 

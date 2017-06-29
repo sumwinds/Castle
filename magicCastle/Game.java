@@ -1,62 +1,127 @@
-package magicCastle;
+package castle;
 
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class Game {
-	private Room currentRoom;
-	private HashMap<String, Handler> handlers = new HashMap<String, Handler>();
+    private Room currentRoom;
+    private HashMap<String, Handler> handlers = new HashMap<String, Handler>();
+        
+    private class Handler {
+    	
+    	public Handler() {}
+    	
+    	public void doCmd(String word) {}
+    	public boolean isBye() {
+    		return false;
+    	}
+    }
+    
+    public Game() 
+    {
+    	handlers.put("go", new Handler() {
+    		public void doCmd(String word) {
+    			goRoom(word);
+    		}
+    	});
+    	
+    	handlers.put("bye", new Handler() {
+    		public boolean isBye() {
+        		return true;
+        	}
+    	});
+    	
+    	handlers.put("help", new Handler() {
+    		public void doCmd(String word) {
+    	        System.out.println("è¿·è·¯äº†å—ï¼Ÿä½ å¯ä»¥åšçš„å‘½ä»¤æœ‰ï¼šgo bye help");
+    	        System.out.println("å¦‚ï¼š\tgo east");
+    		}
+    	});
+        createRooms();
+    }
 
-	public Game() {
-		handlers.put("go", new Handler() {
+    private void createRooms()
+    {
+        Room outside, lobby, pub, study, bedroom;
+      
+        //	åˆ¶é€ æˆ¿é—´
+        outside = new Room("åŸå ¡å¤–");
+        lobby = new Room("å¤§å ‚");
+        pub = new Room("å°é…’å§");
+        study = new Room("ä¹¦æˆ¿");
+        bedroom = new Room("å§å®¤");
+        
+        //	åˆå§‹åŒ–æˆ¿é—´çš„å‡ºå£
+        outside.setExit("east", lobby);
+        outside.setExit("south", study);
+        outside.setExit("west", pub);
+        lobby.setExit("west", outside);
+        lobby.setExit("up", pub);
+        pub.setExit("east", outside);
+        pub.setExit("down", lobby);
+        study.setExit("north",outside);
+        study.setExit("east", bedroom);
+        bedroom.setExit("west", study);
 
-			@Override
-			public void doCmd(String word) {
-				super.doCmd(word);
-			}
-			
-		});
-		handlers.put("help", new Handler() {
+        currentRoom = outside;  //	ä»åŸå ¡é—¨å¤–å¼€å§‹
+    }
 
-			@Override
-			public void doCmd(String word) {
-    	        System.out.println("ÃÔÂ·ÁËÂğ£¿Äã¿ÉÒÔ×öµÄÃüÁîÓĞ£ºgo bye help");
-    	        System.out.println("Èç£º\tgo east");
-			}
-			
-		});
-		handlers.put("bye", new Handler() {
+    private void printWelcome() {
+        System.out.println();
+        System.out.println("æ¬¢è¿æ¥åˆ°åŸå ¡ï¼");
+        System.out.println("è¿™æ˜¯ä¸€ä¸ªè¶…çº§æ— èŠçš„æ¸¸æˆã€‚");
+        System.out.println("å¦‚æœéœ€è¦å¸®åŠ©ï¼Œè¯·è¾“å…¥ 'help' ã€‚");
+        System.out.println();
+        showPrompt();
+    }
 
-			@Override
-			public boolean isBye() {
-				return true;
-			}
-			
-		});
-		creatRooms();
-	}
+    // ä»¥ä¸‹ä¸ºç”¨æˆ·å‘½ä»¤
+
+    private void showPrompt() {
+        System.out.println("ä½ åœ¨" + currentRoom);
+        System.out.print("å‡ºå£æœ‰: ");
+        System.out.println(currentRoom.getExitDesc());
+        System.out.println();
+    }
+
+    private void play() {
+		Scanner in = new Scanner(System.in);
+    	while ( true ) {
+    		String line = in.nextLine();
+    		String[] words = line.split(" ");
+    		Handler handler = handlers.get(words[0]);
+    		String value = "";
+    		if(words.length>1) {
+    			value = words[1];
+    		}
+    		if(handler != null) {
+    			handler.doCmd(value);
+    			if(handler.isBye()) {
+    				break;
+    			}
+    		}
+    	}
+        in.close();
+    }
+    
+    private void goRoom(String direction) 
+    {
+        Room nextRoom = currentRoom.getExit(direction);
+
+        if (nextRoom == null) {
+            System.out.println("é‚£é‡Œæ²¡æœ‰é—¨ï¼");
+        }
+        else {
+            currentRoom = nextRoom;
+            showPrompt();
+        }
+    }
 	
-	private void creatRooms() {
-		Room outside, lobby, pub, study, bedroom, kitchen, collection, guestroom;
-        //	ÖÆÔì·¿¼ä
-			//Ò»Â¥
-		outside = new Room("³Ç±¤Íâ");
-		lobby = new Room("´óÌÃ");
-		kitchen = new Room("³ø·¿");
-		pub = new Room("¾Æ°É");
-			//µØÏÂÊÒ
-		collection = new Room("ÊÕ²ØÊÒ");
-			//¶şÂ¥
-		study = new Room("Êé·¿");
-		bedroom = new Room("ÎÔÊÒ");
-		guestroom = new Room("¿Í·¿");
-			//¶¥Â¥
-		outside.setExit("north", lobby);
-		
-		currentRoom = outside;
-	}
-
 	public static void main(String[] args) {
 		Game game = new Game();
+		game.printWelcome();
+        game.play();
+        System.out.println("æ„Ÿè°¢æ‚¨çš„å…‰ä¸´ã€‚å†è§ï¼");
 	}
 
 }
