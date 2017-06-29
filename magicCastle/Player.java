@@ -6,17 +6,23 @@ import Tasks.Task;
 
 public class Player {
 	private int HP = 20;
-	private int MP = 20;
+//	private int MP = 20;
+	private int ATK = 5;
 	private int sex = 1;
-	private Skill[] skills = null;
-	private Task[] tasks = null;
-	private Equipment[] equipment = null;
+//	private Skill[] skills = null;
+//	private Task[] tasks = null;
+//	private Equipment[] equipment = null;
 	private String name = null;
-	private String description = null;
+	private String description = "这个人很懒，什么都没写。";
 	
-	public void setInformation(int HP, int MP, int sex, String name) {
+	public Player(int HP, int sex, String name, String description) {
 		this.HP   = HP;
-		this.MP   = MP;
+		this.sex  = sex;
+		this.name = name;
+		this.description = description;
+	}
+	public Player(int HP, int sex, String name) {
+		this.HP   = HP;
 		this.sex  = sex;
 		this.name = name;
 	}
@@ -31,14 +37,14 @@ public class Player {
 		}
 	}
 	private String[] getInformation() {
-		String[] I = new String[7];
+		String[] I = new String[4];
 		I[0] = "name: " + name;
 		I[1] = "sex: " + isMan(sex);
-		I[2] = "HP: " + HP + "  " +"MP: " + MP;
-		I[3] = "Skills: " + showSkills();
-		I[4] = "Tasks: " + showTasks();
-		I[5] = "Equipment: " + showEquipment();
-		I[6] = "Description: " + description;
+		I[2] = "HP: " + HP + "  ";
+//		I[3] = "Skills: " + showSkills();
+//		I[4] = "Tasks: " + showTasks();
+//		I[5] = "Equipment: " + showEquipment();
+		I[3] = "Description: " + description;
 		return I;
 	}
 	
@@ -48,27 +54,39 @@ public class Player {
 		}else
 		return "Woman";
 	}
-	private String showSkills() {
-		StringBuffer sb = new StringBuffer();
-		for(Skill s : skills){
-			sb.append(s.toString() + " ");
-		}
-		return sb.toString();
-	}
-	private String showEquipment() {
-		StringBuffer sb = new StringBuffer();
-		for(Equipment s : equipment){
-			sb.append(s.toString() + " ");
-		}
-		return sb.toString();
-	}
-	private String showTasks() {
-		StringBuffer sb = new StringBuffer();
-		for(Task s : tasks){
-			sb.append(s.toString() + " ");
-		}
-		return sb.toString();
+	
+//	private String showSkills() {
+//		StringBuffer sb = new StringBuffer();
+//		for(Skill s : skills){
+//			sb.append(s.toString() + " ");
+//		}
+//		return sb.toString();
+//	}
+//	private String showEquipment() {
+//		StringBuffer sb = new StringBuffer();
+//		for(Equipment s : equipment){
+//			sb.append(s.toString() + " ");
+//		}
+//		return sb.toString();
+//	}
+//	private String showTasks() {
+//		StringBuffer sb = new StringBuffer();
+//		for(Task s : tasks){
+//			sb.append(s.toString() + " ");
+//		}
+//		return sb.toString();
+//	}
+	
+//	玩家指令
+	public int attack() {
+		return ATK;
 	}
 	
-//	使用物品
+	public int getHP() {
+		return HP;
+	}
+	
+	public void beAttacked(int ATK) {
+		HP = HP - ATK;
+	}
 }

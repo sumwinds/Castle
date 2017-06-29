@@ -7,4 +7,7 @@ public class Handler {
 	public boolean isBye() {
 		return false;
 	}
+	public boolean iswin() {
+		return false;
+	}
 }

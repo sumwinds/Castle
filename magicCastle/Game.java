@@ -1,57 +1,120 @@
-package castle;
+package magicCastle;
 
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class Game {
-    private Room currentRoom;
-    private HashMap<String, Handler> handlers = new HashMap<String, Handler>();
-        
-    private class Handler {
-    	
-    	public Handler() {}
-    	
-    	public void doCmd(String word) {}
-    	public boolean isBye() {
-    		return false;
-    	}
-    }
-    
-    public Game() 
-    {
-    	handlers.put("go", new Handler() {
-    		public void doCmd(String word) {
-    			goRoom(word);
-    		}
-    	});
-    	
-    	handlers.put("bye", new Handler() {
-    		public boolean isBye() {
-        		return true;
-        	}
-    	});
-    	
-    	handlers.put("help", new Handler() {
-    		public void doCmd(String word) {
-    	        System.out.println("è¿·è·¯äº†å—ï¼Ÿä½ å¯ä»¥åšçš„å‘½ä»¤æœ‰ï¼šgo bye help");
-    	        System.out.println("å¦‚ï¼š\tgo east");
-    		}
-    	});
-        createRooms();
-    }
+import Monster.Ordinary;
 
-    private void createRooms()
-    {
-        Room outside, lobby, pub, study, bedroom;
-      
-        //	åˆ¶é€ æˆ¿é—´
-        outside = new Room("åŸå ¡å¤–");
-        lobby = new Room("å¤§å ‚");
-        pub = new Room("å°é…’å§");
-        study = new Room("ä¹¦æˆ¿");
-        bedroom = new Room("å§å®¤");
-        
-        //	åˆå§‹åŒ–æˆ¿é—´çš„å‡ºå£
+public class Game {
+	private Room currentRoom;
+	private Player player;
+	private HashMap<String, Handler> handlers = new HashMap<String, Handler>();
+	Scanner in = new Scanner(System.in);
+
+	public Game() {
+		handlers.put("go", new Handler() {
+
+			@Override
+			public void doCmd(String word) {
+				goRoom(word);
+			}
+			
+		});
+		handlers.put("help", new Handler() {
+
+			@Override
+			public void doCmd(String word) {
+    	        System.out.println("ÃÔÂ·ÁËÂğ£¿Äã¿ÉÒÔ×öµÄÃüÁîÓĞ£ºgo bye help find fight");
+    	        System.out.println("Èç£º\tgo east");
+			}
+			
+		});
+		handlers.put("bye", new Handler() {
+
+			@Override
+			public boolean isBye() {
+				return true;
+			}
+			
+		});
+		handlers.put("find", new Handler() {
+
+			@Override
+			public void doCmd(String word) {
+				System.out.println("");
+				System.out.println("·¿¼äÀïÓĞ"+getMonsterNum()+"Ö»¹ÖÎï");
+			}
+			
+		});
+		handlers.put("fight", new Handler() {
+
+			@Override
+			public boolean iswin() {
+				System.out.println("");
+				return fight();
+			}
+		});
+		creatRooms();
+	}
+	
+	private boolean fight() {
+		if(currentRoom.getMonsterNumber(currentRoom) == 0) {
+			System.out.println("¹ÖÎïÒÑ¾­±»È«²¿ÏûÃğÁË");
+			return false;
+		}
+		Ordinary monster = new Ordinary();
+		System.out.println("¹ÖÎï»¹ÓĞ"+monster.getHP()+"µãÑª");
+		System.out.println("Äã»¹ÓĞ"+player.getHP()+"µãÑª");
+		while(true) {
+			monster.beAttacked(player.attack());
+			System.out.println("Äã»÷ÖĞÁË¹ÖÎï¡£");
+			if(monster.getHP()<=0) {
+				System.out.println("Äã»÷É±ÁË¹ÖÎï¡£");
+				currentRoom.setMonsterNumber();
+				System.out.println("Äã»¹ÓĞ"+player.getHP()+"µãÑª");
+				return false;
+				}
+			player.beAttacked(monster.attack());
+			System.out.println("¹ÖÎï»÷ÖĞÁËÄã¡£");
+			if(player.getHP()<=0) {
+				System.out.println("GAME OVER£¡");
+				return true;
+				}
+		}
+	}
+
+	private void creatPlayer() {
+		System.out.println("ÇëÊäÈëÈËÎïêÇ³Æ");
+		String name = in.nextLine();
+		System.out.println("ÇëÑ¡ÔñÈËÎïĞÔ±ğ");
+		System.out.println("ÄĞĞÔ--1   Å®ĞÔ--2");
+		int sex = in.nextInt();
+		
+		player = new Player(5, sex, name);
+	}
+
+	private void creatRooms() {
+		Room outside, lobby, pub, study, bedroom;
+        //	ÖÆÔì·¿¼ä
+//			Ò»Â¥, kitchen, collection, guestroom
+//		outside = new Room("³Ç±¤Íâ");
+//		lobby = new Room("´óÌÃ");
+//		kitchen = new Room("³ø·¿");
+//		pub = new Room("¾Æ°É");
+//			//µØÏÂÊÒ
+//		collection = new Room("ÊÕ²ØÊÒ");
+//			//¶şÂ¥
+//		study = new Room("Êé·¿");
+//		bedroom = new Room("ÎÔÊÒ");
+//		guestroom = new Room("¿Í·¿");
+//			//¶¥Â¥
+//		outside.setExit("north", lobby);
+        outside = new Room("³Ç±¤Íâ");
+        lobby = new Room("´óÌÃ");
+        pub = new Room("Ğ¡¾Æ°É");
+        study = new Room("Êé·¿");
+        bedroom = new Room("ÎÔÊÒ");
+
         outside.setExit("east", lobby);
         outside.setExit("south", study);
         outside.setExit("west", pub);
@@ -62,54 +125,55 @@ public class Game {
         study.setExit("north",outside);
         study.setExit("east", bedroom);
         bedroom.setExit("west", study);
-
-        currentRoom = outside;  //	ä»åŸå ¡é—¨å¤–å¼€å§‹
-    }
-
-    private void printWelcome() {
+		
+		currentRoom = outside;
+	}
+	
+	private void printWelcome() {
         System.out.println();
-        System.out.println("æ¬¢è¿æ¥åˆ°åŸå ¡ï¼");
-        System.out.println("è¿™æ˜¯ä¸€ä¸ªè¶…çº§æ— èŠçš„æ¸¸æˆã€‚");
-        System.out.println("å¦‚æœéœ€è¦å¸®åŠ©ï¼Œè¯·è¾“å…¥ 'help' ã€‚");
+        System.out.println(player.toString()+",»¶Ó­À´µ½³Ç±¤£¡");
+        System.out.println("ÕâÊÇÒ»¸ö³¬¼¶ÎŞÁÄµÄÓÂÕßÓÎÏ·¡£");
+        System.out.println("Èç¹ûĞèÒª°ïÖú£¬ÇëÊäÈë 'help'¡£");
         System.out.println();
         showPrompt();
-    }
+	}
 
-    // ä»¥ä¸‹ä¸ºç”¨æˆ·å‘½ä»¤
+	private void showPrompt() {
+		System.out.println("");
+		System.out.println("ÄãÔÚ" + currentRoom);
+		System.out.print("³ö¿ÚÓĞ£º");
+		System.out.println(currentRoom.getExitDesc());
+	}
 
-    private void showPrompt() {
-        System.out.println("ä½ åœ¨" + currentRoom);
-        System.out.print("å‡ºå£æœ‰: ");
-        System.out.println(currentRoom.getExitDesc());
-        System.out.println();
-    }
-
-    private void play() {
-		Scanner in = new Scanner(System.in);
-    	while ( true ) {
-    		String line = in.nextLine();
-    		String[] words = line.split(" ");
-    		Handler handler = handlers.get(words[0]);
-    		String value = "";
-    		if(words.length>1) {
-    			value = words[1];
-    		}
-    		if(handler != null) {
-    			handler.doCmd(value);
-    			if(handler.isBye()) {
-    				break;
-    			}
-    		}
-    	}
-        in.close();
-    }
-    
-    private void goRoom(String direction) 
+	private int getMonsterNum() {
+		return currentRoom.getMonsterNumber(currentRoom);
+	}
+	
+	private void play() {
+		while(true) {
+			String line = in.nextLine();
+			String[] words = line.split(" ");
+			Handler handler = handlers.get(words[0]);
+			String value = "";
+			if(words.length>1) {
+				value = words[1];
+			}
+			if(handler != null) {
+				handler.doCmd(value);
+				if(handler.isBye()||handler.iswin()) {
+					break;
+				}
+			}
+		}
+		in.close();
+	}
+	
+	private void goRoom(String direction) 
     {
         Room nextRoom = currentRoom.getExit(direction);
 
         if (nextRoom == null) {
-            System.out.println("é‚£é‡Œæ²¡æœ‰é—¨ï¼");
+            System.out.println("ÄÇÀïÃ»ÓĞÃÅ£¡");
         }
         else {
             currentRoom = nextRoom;
@@ -119,9 +183,10 @@ public class Game {
 	
 	public static void main(String[] args) {
 		Game game = new Game();
+		game.creatPlayer();
 		game.printWelcome();
-        game.play();
-        System.out.println("æ„Ÿè°¢æ‚¨çš„å…‰ä¸´ã€‚å†è§ï¼");
+		game.play();
+        System.out.println("¸ĞĞ»ÄúµÄ¹âÁÙ¡£ÔÙ¼û£¡");
 	}
 
 }
